@@ -6,7 +6,7 @@
 /*   By: ealgar-c <ealgar-c@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 19:02:38 by ealgar-c          #+#    #+#             */
-/*   Updated: 2024/11/24 18:03:14 by ealgar-c         ###   ########.fr       */
+/*   Updated: 2024/11/24 18:52:09 by ealgar-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ int	test_write(void) {
 		for (int j = 0; j < fds_nb; j++) {
 			printf("\t\"%s\" (fd: %i)\n%i. ", str, fds[j], i + 1);
 			errno = 0;
-			size_t size = str ? strlen(str) : 100;
+			size_t size = str ? strlen(str) : BUFFER_SIZE;
 			int expected_ret_val = write(fds[j], str, size);
 			int expected_errno = errno;
 			errno = 0;
@@ -174,17 +174,17 @@ int test_read(void) {
     char buffer[BUFFER_SIZE];
     char ref_buffer[BUFFER_SIZE];
     int fds[] = {
-        -1, // Invalid file descriptor
-        open("read_test.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644), // Create test file
-        10, // Arbitrary invalid fd
+        -1,
+        open("read_test.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644),
+        10,
     };
     write(fds[1], "This is a test.", 15); // Write to the test file
     close(fds[1]);
-    fds[1] = open("read_test.txt", O_RDONLY, 0644); // Re-open in read mode
+    fds[1] = open("read-test.txt", O_RDONLY, 0644); // Re-open in read mode
     int ret_val = 0;
 
     printf(TITLE_ANSI "\tTesting read...\n" NC_ANSI);
-    for (int i = 0; i < sizeof(fds) / sizeof(int); i++) {
+    for (long unsigned int i = 0; i < sizeof(fds) / sizeof(int); i++) {
         printf("File descriptor: %d\n", fds[i]);
         errno = 0;
         int expected_ret = read(fds[i], ref_buffer, BUFFER_SIZE);
